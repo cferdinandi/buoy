@@ -62,7 +62,7 @@ var banner = {
 
 
 /**
- * Gulp Tasks
+ * Gulp Taks
  */
 
 // Lint, minify, and concatenate scripts
@@ -122,7 +122,7 @@ gulp.task('refresh', ['compile', 'docs'], function () {
  * Task Runners
  */
 
-// Compile files
+// Compile files (default)
 gulp.task('default', [
 	'lint:scripts',
 	'clean:dist',

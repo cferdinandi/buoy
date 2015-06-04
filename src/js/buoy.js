@@ -10,35 +10,18 @@
 
 	'use strict';
 
-	//
-	// Variables
-	//
-
-	var buoy = {}; // Object for public APIs
-	var supports = !!document.querySelector && !!root.addEventListener; // Feature test
-	var settings, eventTimeout;
-
-	// Default settings
-	var defaults = {
-		someVar: 123,
-		initClass: 'js-buoy',
-		callbackBefore: function () {},
-		callbackAfter: function () {}
-	};
-
-
-	//
-	// Methods
-	//
+	// Object for public APIs
+	var buoy = {};
 
 	/**
-	 * A simple forEach() implementation for Arrays, Objects and NodeLists
-	 * @private
+	 * A simple forEach() implementation for Arrays, Objects and NodeLists.
+	 * @author Todd Motto
+	 * @link   https://github.com/toddmotto/foreach
 	 * @param {Array|Object|NodeList} collection Collection of items to iterate
-	 * @param {Function} callback Callback function for each iteration
-	 * @param {Array|Object|NodeList} scope Object/NodeList/Array that forEach is iterating over (aka `this`)
+	 * @param {Function}              callback   Callback function for each iteration
+	 * @param {Array|Object|NodeList} scope      Object/NodeList/Array that forEach is iterating over (aka `this`)
 	 */
-	var forEach = function (collection, callback, scope) {
+	buoy.forEach = function (collection, callback, scope) {
 		if (Object.prototype.toString.call(collection) === '[object Object]') {
 			for (var prop in collection) {
 				if (Object.prototype.hasOwnProperty.call(collection, prop)) {
@@ -53,137 +36,213 @@
 	};
 
 	/**
-	 * Merge defaults with user options
-	 * @private
-	 * @param {Object} defaults Default settings
-	 * @param {Object} options User options
-	 * @returns {Object} Merged values of defaults and options
+	 * Shallow merge two or more objects. Returns a new object.
+	 * @param {Object}   defaults Default settings
+	 * @param {Object}   options  User options
+	 * @returns {Object}          Merged values of defaults and options
 	 */
-	var extend = function ( defaults, options ) {
+	buoy.extend = function ( objects ) {
 		var extended = {};
-		forEach(defaults, function (value, prop) {
-			extended[prop] = defaults[prop];
-		});
-		forEach(options, function (value, prop) {
-			extended[prop] = options[prop];
-		});
+		var merge = function (obj) {
+			for (var prop in obj) {
+				if (Object.prototype.hasOwnProperty.call(obj, prop)) {
+					extended[prop] = obj[prop];
+				}
+			}
+		};
+		merge(arguments[0]);
+		for (var i = 1; i < arguments.length; i++) {
+			var obj = arguments[i];
+			merge(obj);
+		}
 		return extended;
 	};
 
 	/**
-	 * Convert data-options attribute into an object of key/value pairs
-	 * @private
-	 * @param {String} options Link-specific options as a data attribute string
-	 * @returns {Object}
+	 * Deep merge two or more objects. Returns a new object.
+	 * @param {Object}   defaults Default settings
+	 * @param {Object}   options  User options
+	 * @returns {Object}          Merged values of defaults and options
 	 */
-	var getDataOptions = function ( options ) {
-		return !options || !(typeof JSON === 'object' && typeof JSON.parse === 'function') ? {} : JSON.parse( options );
+	buoy.deepExtend = function ( objects ) {
+		var extended = {};
+		var merge = function (obj) {
+			for (var prop in obj) {
+				if (Object.prototype.hasOwnProperty.call(obj, prop)) {
+					if ( Object.prototype.toString.call(obj[prop]) === '[object Object]' ) {
+						extended[prop] = deepExtend(extended[prop], obj[prop]);
+					}
+					else {
+						extended[prop] = obj[prop];
+					}
+				}
+			}
+		};
+		merge(arguments[0]);
+		for (var i = 1; i < arguments.length; i++) {
+			var obj = arguments[i];
+			merge(obj);
+		}
+		return extended;
 	};
 
 	/**
-	 * Get the closest matching element up the DOM tree
-	 * @param {Element} elem Starting element
-	 * @param {String} selector Selector to match against (class, ID, or data attribute)
-	 * @return {Boolean|Element} Returns false if not match found
+	 * Get the height of an element.
+	 * @param  {Node} elem The element to get the height of
+	 * @return {Number}    The element's height in pixels
 	 */
-	var getClosest = function (elem, selector) {
+	buoy.getHeight = function ( elem ) {
+		return Math.max( elem.scrollHeight, elem.offsetHeight, elem.clientHeight );
+	};
+
+	/**
+	 * Get an element's distance from the top of the Document.
+	 * @param  {Node} elem The element
+	 * @return {Number}    Distance from the top in pixels
+	 */
+	buy.getOffsetTop = function ( elem ) {
+		var location = 0;
+		if (elem.offsetParent) {
+			do {
+				location += elem.offsetTop;
+				elem = elem.offsetParent;
+			} while (elem);
+		}
+		return location >= 0 ? location : 0;
+	};
+
+	/**
+	 * Get the closest matching element up the DOM tree.
+	 * @param {Element} elem     Starting element
+	 * @param {String}  selector Selector to match against (class, ID, data attribute, or tag)
+	 * @return {Boolean|Element} Returns null if not match found
+	 */
+	buoy.getClosest = function (elem, selector) {
+
 		var firstChar = selector.charAt(0);
+
+		// Get closest match
 		for ( ; elem && elem !== document; elem = elem.parentNode ) {
+
+			// If selector is a class
 			if ( firstChar === '.' ) {
 				if ( elem.classList.contains( selector.substr(1) ) ) {
 					return elem;
 				}
-			} else if ( firstChar === '#' ) {
+			}
+
+			// If selector is an ID
+			if ( firstChar === '#' ) {
 				if ( elem.id === selector.substr(1) ) {
 					return elem;
 				}
-			} else if ( firstChar === '[' ) {
+			}
+
+			// If selector is a data attribute
+			if ( firstChar === '[' ) {
 				if ( elem.hasAttribute( selector.substr(1, selector.length - 2) ) ) {
 					return elem;
 				}
 			}
+
+			// If selector is a tag
+			if ( elem.tagName.toLowerCase() === selector ) {
+				return elem;
+			}
+
 		}
-		return false;
+
+		return null;
+
 	};
 
-	// @todo Do something...
-
 	/**
-	 * Handle events
-	 * @private
+	 * Get an element's parents.
+	 * @param  {Node}   elem     The element
+	 * @param  {String} selector Selector to match against (class, ID, data attribute, or tag)
+	 * @return {Array}           An array of matching nodes
 	 */
-	var eventHandler = function (event) {
-		var toggle = event.target;
-		var closest = getClosest(toggle, '[data-some-selector]');
-		if ( closest ) {
-			// run methods
+	buoy.getParents = function (elem, selector) {
+
+		var parents = [];
+		var firstChar;
+		if ( selector ) {
+			firstChar = selector.charAt(0);
 		}
-	};
 
-	/**
-	 * Destroy the current initialization.
-	 * @public
-	 */
-	buoy.destroy = function () {
+		// Get matches
+		for ( ; elem && elem !== document; elem = elem.parentNode ) {
+			if ( selector ) {
 
-		// If plugin isn't already initialized, stop
-		if ( !settings ) return;
+				// If selector is a class
+				if ( firstChar === '.' ) {
+					if ( elem.classList.contains( selector.substr(1) ) ) {
+						parents.push( elem );
+					}
+				}
 
-		// Remove init class for conditional CSS
-		document.documentElement.classList.remove( settings.initClass );
+				// If selector is an ID
+				if ( firstChar === '#' ) {
+					if ( elem.id === selector.substr(1) ) {
+						parents.push( elem );
+					}
+				}
 
-		// @todo Undo any other init functions...
+				// If selector is a data attribute
+				if ( firstChar === '[' ) {
+					if ( elem.hasAttribute( selector.substr(1, selector.length - 1) ) ) {
+						parents.push( elem );
+					}
+				}
 
-		// Remove event listeners
-		document.removeEventListener('click', eventHandler, false);
+				// If selector is a tag
+				if ( elem.tagName.toLowerCase() === selector ) {
+					parents.push( elem );
+				}
 
-		// Reset variables
-		settings = null;
-		eventTimeout = null;
+			} else {
+				parents.push( elem );
+			}
 
-	};
-
-	/**
-	 * On window scroll and resize, only run events at a rate of 15fps for better performance
-	 * @private
-	 * @param  {Function} eventTimeout Timeout function
-	 * @param  {Object} settings
-	 */
-	var eventThrottler = function () {
-		if ( !eventTimeout ) {
-			eventTimeout = setTimeout(function() {
-				eventTimeout = null;
-				actualMethod( settings );
-			}, 66);
 		}
+
+		// Return parents if any exist
+		if ( parents.length === 0 ) {
+			return null;
+		} else {
+			return parents;
+		}
+
 	};
 
 	/**
-	 * Initialize Plugin
-	 * @public
-	 * @param {Object} options User settings
+	 * Get an element's siblings.
+	 * @param  {Node} elem The element
+	 * @return {Array}     An array of sibling nodes
 	 */
-	buoy.init = function ( options ) {
-
-		// feature test
-		if ( !supports ) return;
-
-		// Destroy any existing initializations
-		buoy.destroy();
-
-		// Merge user options with defaults
-		settings = extend( defaults, options || {} );
-
-		// Add class to HTML element to activate conditional CSS
-		document.documentElement.classList.add( settings.initClass );
-
-		// @todo Do something...
-
-		// Listen for events
-		document.addEventListener('click', eventHandler, false);
-
+	buoy.getSiblings = function (elem) {
+		var siblings = [];
+		var sibling = elem.parentNode.firstChild;
+		for ( ; sibling; sibling = sibling.nextSibling ) {
+			if ( sibling.nodeType === 1 && sibling !== elem ) {
+				siblings.push( sibling );
+			}
+		}
+		return siblings;
 	};
 
+	/**
+	 * Get data from a URL query string.
+	 * @param  {String} field The field to get from the URL
+	 * @param  {String} url   The URL to parse
+	 * @return {String}       The field value
+	 */
+	buoy.getQueryString = function ( field, url ) {
+		var href = url ? url : window.location.href;
+		var reg = new RegExp( '[?&]' + field + '=([^&#]*)', 'i' );
+		var string = reg.exec(href);
+		return string ? string[1] : null;
+	};
 
 	//
 	// Public APIs
