@@ -66,7 +66,7 @@
 				if ( Object.prototype.hasOwnProperty.call( obj, prop ) ) {
 					// If deep merge and property is an object, merge properties
 					if ( deep && Object.prototype.toString.call(obj[prop]) === '[object Object]' ) {
-						extended[prop] = deepExtend( extended[prop], obj[prop] );
+						extended[prop] = deepExtend( true, extended[prop], obj[prop] );
 					} else {
 						extended[prop] = obj[prop];
 					}
