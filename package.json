@@ -1,6 +1,6 @@
 {
 	"name": "buoy",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "A lightweight collection of helper methods for getting stuff done in native JavaScript.",
 	"main": "./dist",
 	"author": {
