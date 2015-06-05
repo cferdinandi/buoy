@@ -13,6 +13,11 @@
 	// Object for public APIs
 	var buoy = {};
 
+
+	//
+	// Methods
+	//
+
 	/**
 	 * A simple forEach() implementation for Arrays, Objects and NodeLists.
 	 * @author Todd Motto
@@ -21,69 +26,62 @@
 	 * @param {Function}              callback   Callback function for each iteration
 	 * @param {Array|Object|NodeList} scope      Object/NodeList/Array that forEach is iterating over (aka `this`)
 	 */
-	buoy.forEach = function (collection, callback, scope) {
-		if (Object.prototype.toString.call(collection) === '[object Object]') {
-			for (var prop in collection) {
-				if (Object.prototype.hasOwnProperty.call(collection, prop)) {
-					callback.call(scope, collection[prop], prop, collection);
+	buoy.forEach = function ( collection, callback, scope ) {
+		if ( Object.prototype.toString.call( collection ) === '[object Object]' ) {
+			for ( var prop in collection ) {
+				if ( Object.prototype.hasOwnProperty.call( collection, prop ) ) {
+					callback.call( scope, collection[prop], prop, collection );
 				}
 			}
 		} else {
-			for (var i = 0, len = collection.length; i < len; i++) {
-				callback.call(scope, collection[i], i, collection);
+			for ( var i = 0, len = collection.length; i < len; i++ ) {
+				callback.call( scope, collection[i], i, collection );
 			}
 		}
 	};
 
 	/**
-	 * Shallow merge two or more objects. Returns a new object.
-	 * @param {Object}   defaults Default settings
-	 * @param {Object}   options  User options
+	 * Merge two or more objects. Returns a new object.
+	 * @param {Boolean}  deep     If true, do a deep (or recursive) merge [optional]
+	 * @param {Object}   objects  The objects to merge together
 	 * @returns {Object}          Merged values of defaults and options
 	 */
-	buoy.extend = function ( objects ) {
-		var extended = {};
-		var merge = function (obj) {
-			for (var prop in obj) {
-				if (Object.prototype.hasOwnProperty.call(obj, prop)) {
-					extended[prop] = obj[prop];
-				}
-			}
-		};
-		merge(arguments[0]);
-		for (var i = 1; i < arguments.length; i++) {
-			var obj = arguments[i];
-			merge(obj);
-		}
-		return extended;
-	};
+	buoy.extend = function () {
 
-	/**
-	 * Deep merge two or more objects. Returns a new object.
-	 * @param {Object}   defaults Default settings
-	 * @param {Object}   options  User options
-	 * @returns {Object}          Merged values of defaults and options
-	 */
-	buoy.deepExtend = function ( objects ) {
+		// Variables
 		var extended = {};
+		var deep = false;
+		var i = 0;
+		var length = arguments.length;
+
+		// Check if a deep merge
+		if ( Object.prototype.toString.call( arguments[0] ) === '[object Boolean]' ) {
+			deep = arguments[0];
+			i++;
+		}
+
+		// Merge the object into the extended object
 		var merge = function (obj) {
-			for (var prop in obj) {
-				if (Object.prototype.hasOwnProperty.call(obj, prop)) {
-					if ( Object.prototype.toString.call(obj[prop]) === '[object Object]' ) {
-						extended[prop] = deepExtend(extended[prop], obj[prop]);
-					}
-					else {
+			for ( var prop in obj ) {
+				if ( Object.prototype.hasOwnProperty.call( obj, prop ) ) {
+					// If deep merge and property is an object, merge properties
+					if ( deep && Object.prototype.toString.call(obj[prop]) === '[object Object]' ) {
+						extended[prop] = deepExtend( extended[prop], obj[prop] );
+					} else {
 						extended[prop] = obj[prop];
 					}
 				}
 			}
 		};
-		merge(arguments[0]);
-		for (var i = 1; i < arguments.length; i++) {
+
+		// Loop through each object and conduct a merge
+		for ( ; i < length; i++ ) {
 			var obj = arguments[i];
 			merge(obj);
 		}
+
 		return extended;
+
 	};
 
 	/**
@@ -100,7 +98,7 @@
 	 * @param  {Node} elem The element
 	 * @return {Number}    Distance from the top in pixels
 	 */
-	buy.getOffsetTop = function ( elem ) {
+	buoy.getOffsetTop = function ( elem ) {
 		var location = 0;
 		if (elem.offsetParent) {
 			do {
@@ -113,21 +111,41 @@
 
 	/**
 	 * Get the closest matching element up the DOM tree.
-	 * @param {Element} elem     Starting element
-	 * @param {String}  selector Selector to match against (class, ID, data attribute, or tag)
-	 * @return {Boolean|Element} Returns null if not match found
+	 * @param  {Element} elem     Starting element
+	 * @param  {String}  selector Selector to match against (class, ID, data attribute, or tag)
+	 * @return {Boolean|Element}  Returns null if not match found
 	 */
-	buoy.getClosest = function (elem, selector) {
+	buoy.getClosest = function ( elem, selector ) {
 
+		// Variables
 		var firstChar = selector.charAt(0);
+		var supports = 'classList' in document.documentElement;
+		var attribute, value;
+
+		// If selector is a data attribute, split attribute from value
+		if ( firstChar === '[' ) {
+			selector = selector.substr(1, selector.length - 2);
+			attribute = selector.split( '=' );
+
+			if ( attribute.length > 1 ) {
+				value = true;
+				attribute[1] = attribute[1].replace( /"/g, '' ).replace( /'/g, '' );
+			}
+		}
 
 		// Get closest match
 		for ( ; elem && elem !== document; elem = elem.parentNode ) {
 
 			// If selector is a class
 			if ( firstChar === '.' ) {
-				if ( elem.classList.contains( selector.substr(1) ) ) {
-					return elem;
+				if ( supports ) {
+					if ( elem.classList.contains( selector.substr(1) ) ) {
+						return elem;
+					}
+				} else {
+					if ( new RegExp('(^|\\s)' + selector.substr(1) + '(\\s|$)').test( elem.className ) ) {
+						return elem;
+					}
 				}
 			}
 
@@ -140,8 +158,14 @@
 
 			// If selector is a data attribute
 			if ( firstChar === '[' ) {
-				if ( elem.hasAttribute( selector.substr(1, selector.length - 2) ) ) {
-					return elem;
+				if ( elem.hasAttribute( attribute[0] ) ) {
+					if ( value ) {
+						if ( elem.getAttribute( attribute[0] ) === attribute[1] ) {
+							return elem;
+						}
+					} else {
+						return elem;
+					}
 				}
 			}
 
@@ -162,12 +186,25 @@
 	 * @param  {String} selector Selector to match against (class, ID, data attribute, or tag)
 	 * @return {Array}           An array of matching nodes
 	 */
-	buoy.getParents = function (elem, selector) {
+	buoy.getParents = function ( elem, selector ) {
 
+		// Variables
 		var parents = [];
-		var firstChar;
+		var supports = 'classList' in document.documentElement;
+		var firstChar, attribute, value;
+
+		// If selector is a data attribute, split attribute from value
 		if ( selector ) {
 			firstChar = selector.charAt(0);
+			if ( firstChar === '[' ) {
+				selector = selector.substr(1, selector.length - 2);
+				attribute = selector.split( '=' );
+
+				if ( attribute.length > 1 ) {
+					value = true;
+					attribute[1] = attribute[1].replace( /"/g, '' ).replace( /'/g, '' );
+				}
+			}
 		}
 
 		// Get matches
@@ -176,8 +213,14 @@
 
 				// If selector is a class
 				if ( firstChar === '.' ) {
-					if ( elem.classList.contains( selector.substr(1) ) ) {
-						parents.push( elem );
+					if ( supports ) {
+						if ( elem.classList.contains( selector.substr(1) ) ) {
+							parents.push( elem );
+						}
+					} else {
+						if ( new RegExp('(^|\\s)' + selector.substr(1) + '(\\s|$)').test( elem.className ) ) {
+							parents.push( elem );
+						}
 					}
 				}
 
@@ -190,8 +233,14 @@
 
 				// If selector is a data attribute
 				if ( firstChar === '[' ) {
-					if ( elem.hasAttribute( selector.substr(1, selector.length - 1) ) ) {
-						parents.push( elem );
+					if ( elem.hasAttribute( attribute[0] ) ) {
+						if ( value ) {
+							if ( elem.getAttribute( attribute[0] ) === attribute[1] ) {
+								parents.push( elem );
+							}
+						} else {
+							parents.push( elem );
+						}
 					}
 				}
 
@@ -220,15 +269,21 @@
 	 * @param  {Node} elem The element
 	 * @return {Array}     An array of sibling nodes
 	 */
-	buoy.getSiblings = function (elem) {
+	buoy.getSiblings = function ( elem ) {
+
+		// Variables
 		var siblings = [];
 		var sibling = elem.parentNode.firstChild;
+
+		// Loop through all sibling nodes
 		for ( ; sibling; sibling = sibling.nextSibling ) {
 			if ( sibling.nodeType === 1 && sibling !== elem ) {
 				siblings.push( sibling );
 			}
 		}
+
 		return siblings;
+
 	};
 
 	/**
@@ -243,6 +298,7 @@
 		var string = reg.exec(href);
 		return string ? string[1] : null;
 	};
+
 
 	//
 	// Public APIs
