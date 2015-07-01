@@ -49,12 +49,12 @@ A simple forEach() implementation for Arrays, Objects and NodeLists [by Todd Mot
 buoy.forEach(collection, callback, scope);
 
 // Examples
-forEach(['A', 'B', 'C', 'D'], function (value, index) {
+buoy.forEach(['A', 'B', 'C', 'D'], function (value, index) {
 	console.log(value); // A, B, C, D
 	console.log(index); // 0, 1, 2, 3
 });
 
-forEach({ name: 'Todd', location: 'UK' }, function (value, prop, obj) {
+buoy.forEach({ name: 'Todd', location: 'UK' }, function (value, prop, obj) {
 	console.log(value); // Todd, UK
 	console.log(prop); // name, location
 	console.log(obj); // { name: 'Todd', location: 'UK' }, { name: 'Todd', location: 'UK' }

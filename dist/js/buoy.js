@@ -1,5 +1,5 @@
 /**
- * buoy v1.0.1
+ * buoy v1.0.2
  * A lightweight collection of helper methods for getting stuff done in native JavaScript., by Chris Ferdinandi.
  * http://github.com/cferdinandi/buoy
  * 
@@ -75,7 +75,7 @@
 				if ( Object.prototype.hasOwnProperty.call( obj, prop ) ) {
 					// If deep merge and property is an object, merge properties
 					if ( deep && Object.prototype.toString.call(obj[prop]) === '[object Object]' ) {
-						extended[prop] = deepExtend( true, extended[prop], obj[prop] );
+						extended[prop] = buoy.extend( true, extended[prop], obj[prop] );
 					} else {
 						extended[prop] = obj[prop];
 					}
