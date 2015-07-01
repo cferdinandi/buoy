@@ -1,5 +1,5 @@
 /**
- * buoy v1.0.2
+ * buoy v1.1.0
  * A lightweight collection of helper methods for getting stuff done in native JavaScript., by Chris Ferdinandi.
  * http://github.com/cferdinandi/buoy
  * 
@@ -26,6 +26,25 @@
 	//
 	// Methods
 	//
+
+	/**
+	 * Wait until the DOM is ready before executing code
+	 * @param {Function} fn The function to execute when the DOM is ready
+	 */
+	buoy.ready = function ( fn ) {
+
+		// Sanity check
+		if ( typeof fn  !== 'function' ) return;
+
+		// If document is already loaded, run method
+		if ( document.readyState === 'complete'  ) {
+			return fn();
+		}
+
+		// Otherwise, wait until document is loaded
+		document.addEventListener( 'DOMContentLoaded', fn, false );
+
+	};
 
 	/**
 	 * A simple forEach() implementation for Arrays, Objects and NodeLists.

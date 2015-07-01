@@ -19,6 +19,25 @@
 	//
 
 	/**
+	 * Wait until the DOM is ready before executing code
+	 * @param {Function} fn The function to execute when the DOM is ready
+	 */
+	buoy.ready = function ( fn ) {
+
+		// Sanity check
+		if ( typeof fn  !== 'function' ) return;
+
+		// If document is already loaded, run method
+		if ( document.readyState === 'complete'  ) {
+			return fn();
+		}
+
+		// Otherwise, wait until document is loaded
+		document.addEventListener( 'DOMContentLoaded', fn, false );
+
+	};
+
+	/**
 	 * A simple forEach() implementation for Arrays, Objects and NodeLists.
 	 * @author Todd Motto
 	 * @link   https://github.com/toddmotto/foreach

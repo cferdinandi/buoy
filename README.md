@@ -36,6 +36,35 @@ You can install Buoy with your favorite package manager.
 
 ## Methods
 
+### buoy.ready()
+
+Wait until the DOM is ready before executing code.
+
+```js
+/**
+ * @param {Function} fn The function to execute when the DOM is ready
+ */
+buoy.ready = function ( fn ) {
+
+    // Sanity check
+    if ( typeof fn  !== 'function' ) return;
+
+    // If document is already loaded, run method
+    if ( document.readyState === 'complete'  ) {
+        return fn();
+    }
+
+    // Otherwise, wait until document is loaded
+    document.addEventListener( 'DOMContentLoaded', fn, false );
+
+};
+
+// Example
+buoy.ready(function () {
+   console.log('The DOM will see you now.');
+});
+```
+
 ### buoy.forEach()
 
 A simple forEach() implementation for Arrays, Objects and NodeLists [by Todd Motto](https://github.com/toddmotto/foreach).
