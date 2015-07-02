@@ -13,21 +13,21 @@
 		"url": "http://github.com/cferdinandi/buoy"
 	},
 	"devDependencies": {
-		"gulp": "^3.8.0",
+		"gulp": "^3.9.0",
 		"node-fs": "^0.1.7",
-		"del": "^0.1.3",
-		"lazypipe": "^0.2.2",
-		"gulp-plumber": "^0.6.2",
-		"gulp-flatten": "^0.0.2",
-		"gulp-tap": "^0.1.1",
-		"gulp-rename": "^1.1.0",
-		"gulp-header": "^1.1.1",
+		"del": "^1.2.0",
+		"lazypipe": "^0.2.4",
+		"gulp-plumber": "^1.0.1",
+		"gulp-flatten": "^0.0.4",
+		"gulp-tap": "^0.1.3",
+		"gulp-rename": "^1.2.2",
+		"gulp-header": "^1.2.2",
 		"gulp-footer": "^1.0.5",
-		"gulp-watch": "^1.1.0",
-		"gulp-livereload": "^2.1.1",
-		"gulp-jshint": "^1.6.1",
-		"jshint-stylish": "^0.2.0",
-		"gulp-concat": "^2.2.0",
-		"gulp-uglify": "^0.3.0"
+		"gulp-watch": "^4.2.4",
+		"gulp-livereload": "^3.8.0",
+		"gulp-jshint": "^1.11.1",
+		"jshint-stylish": "^2.0.1",
+		"gulp-concat": "^2.6.0",
+		"gulp-uglify": "^1.2.0"
 	}
 }
