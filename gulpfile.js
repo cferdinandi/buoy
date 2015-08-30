@@ -17,7 +17,7 @@ var watch = require('gulp-watch');
 var livereload = require('gulp-livereload');
 var package = require('./package.json');
 
-// Scripts and tests
+// Scripts
 var jshint = require('gulp-jshint');
 var stylish = require('jshint-stylish');
 var concat = require('gulp-concat');
@@ -43,21 +43,20 @@ var paths = {
  */
 
 var banner = {
-	full :
-		'/**\n' +
-		' * <%= package.name %> v<%= package.version %>\n' +
-		' * <%= package.description %>, by <%= package.author.name %>.\n' +
-		' * <%= package.repository.url %>\n' +
-		' * \n' +
-		' * Free to use under the MIT License.\n' +
-		' * http://gomakethings.com/mit/\n' +
-		' */\n\n',
-	min :
-		'/**' +
-		' <%= package.name %> v<%= package.version %>, by Chris Ferdinandi' +
-		' | <%= package.repository.url %>' +
-		' | Licensed under MIT: http://gomakethings.com/mit/' +
-		' */\n'
+    full :
+        '/*!\n' +
+        ' * <%= package.name %> v<%= package.version %>: <%= package.description %>\n' +
+        ' * (c) ' + new Date().getFullYear() + ' <%= package.author.name %>\n' +
+        ' * MIT License\n' +
+        ' * <%= package.repository.url %>\n' +
+        ' */\n\n',
+    min :
+        '/*!' +
+        ' <%= package.name %> v<%= package.version %>' +
+        ' | (c) ' + new Date().getFullYear() + ' <%= package.author.name %>' +
+        ' | MIT License' +
+        ' | <%= package.repository.url %>' +
+        ' */\n'
 };
 
 
