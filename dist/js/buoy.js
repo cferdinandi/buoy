@@ -1,10 +1,8 @@
-/**
- * buoy v1.1.0
- * A lightweight collection of helper methods for getting stuff done in native JavaScript., by Chris Ferdinandi.
+/*!
+ * buoy v1.1.0: A lightweight collection of helper methods for getting stuff done in native JavaScript.
+ * (c) 2015 Chris Ferdinandi
+ * MIT License
  * http://github.com/cferdinandi/buoy
- * 
- * Free to use under the MIT License.
- * http://gomakethings.com/mit/
  */
 
 (function (root, factory) {

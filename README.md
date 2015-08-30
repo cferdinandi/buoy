@@ -3,18 +3,9 @@ A lightweight collection of helper methods for getting stuff done in native Java
 
 [Download Buoy](https://github.com/cferdinandi/buoy/archive/master.zip)
 
-**In This Documentation**
-
-1. [Getting Started](#getting-started)
-2. [Methods](#methods)
-3. [Browser Compatibility](#browser-compatibility)
-4. [How to Contribute](#how-to-contribute)
-5. [Working with the Source Files](#working-with-the-source-files)
-6. [License](#license)
 
 
-
-## Getting Started
+## Usage
 
 Compiled and production-ready code can be found in the `dist` directory. The `src` directory contains development code.
 
@@ -24,19 +15,9 @@ Include Buoy on your site to begin using the methods in your scripts.
 <script src="dist/js/buoy.js"></script>
 ```
 
-### Installing with Package Managers
+### Methods
 
-You can install Buoy with your favorite package manager.
-
-* **NPM:** `npm install cferdinandi/buoy`
-* **Bower:** `bower install https://github.com/cferdinandi/buoy.git`
-* **Component:** `component install cferdinandi/buoy`
-
-
-
-## Methods
-
-### buoy.ready()
+#### buoy.ready()
 
 Wait until the DOM is ready before executing code.
 
@@ -65,7 +46,7 @@ buoy.ready(function () {
 });
 ```
 
-### buoy.forEach()
+#### buoy.forEach()
 
 A simple forEach() implementation for Arrays, Objects and NodeLists [by Todd Motto](https://github.com/toddmotto/foreach).
 
@@ -79,18 +60,18 @@ buoy.forEach(collection, callback, scope);
 
 // Examples
 buoy.forEach(['A', 'B', 'C', 'D'], function (value, index) {
-	console.log(value); // A, B, C, D
-	console.log(index); // 0, 1, 2, 3
+    console.log(value); // A, B, C, D
+    console.log(index); // 0, 1, 2, 3
 });
 
 buoy.forEach({ name: 'Todd', location: 'UK' }, function (value, prop, obj) {
-	console.log(value); // Todd, UK
-	console.log(prop); // name, location
-	console.log(obj); // { name: 'Todd', location: 'UK' }, { name: 'Todd', location: 'UK' }
+    console.log(value); // Todd, UK
+    console.log(prop); // name, location
+    console.log(obj); // { name: 'Todd', location: 'UK' }, { name: 'Todd', location: 'UK' }
 });
 ```
 
-### buoy.extend()
+#### buoy.extend()
 
 Merge two or more objects. Returns a new object.
 
@@ -106,14 +87,14 @@ buoy.extend( [deep], object1, object2, ... );
 var object1 = {
     apple: 0,
     banana: {
-    	weight: 52,
-    	price: 100
+        weight: 52,
+        price: 100
     },
     cherry: 97
 };
 var object2 = {
     banana: {
-    	price: 200
+        price: 200
     },
     durian: 100
 };
@@ -127,7 +108,7 @@ var newObject = buoy.extend( object1, object2, object3 ); // Shallow extend
 var newObjectDeep = buoy.extend( true, object1, object2, object3 ); // Deep extend
 ```
 
-### buoy.getHeight()
+#### buoy.getHeight()
 
 Get the height of an element.
 
@@ -143,7 +124,7 @@ var elem = document.querySelector( '#example' );
 var height = buoy.getHeight( elem ); // 42
 ```
 
-### buoy.getOffsetTop()
+#### buoy.getOffsetTop()
 
 Get an element's distance from the top of the Document.
 
@@ -159,7 +140,7 @@ var elem = document.querySelector( '#example' );
 buoy.getOffsetTop( elem ); // 133
 ```
 
-### buoy.getClosest()
+#### buoy.getClosest()
 
 Get the closest matching element up the DOM tree. Match by class, ID, data attribute, or tag.
 
@@ -179,7 +160,7 @@ var closestAttribute = buoy.getClosest( elem, '[data-example]' ); // <div data-e
 var closestTag = buoy.getClosest( elem, 'p' ); // <p>Some tag</p>
 ```
 
-### buoy.getParents
+#### buoy.getParents
 
 Get an element's parent nodes. Optionally filter by class, ID, data attribute, or tag.
 
@@ -200,7 +181,7 @@ var parentsWithAttribute = buoy.getParents( elem, '[data-example]' ); // [<div d
 var parentsWithTag = buoy.getParents( elem, 'div' ); // [<div>...</div>, <div>...</div>]
 ```
 
-### buoy.getSiblings()
+#### buoy.getSiblings()
 
 Get an element's sibling nodes.
 
@@ -216,7 +197,7 @@ var elem = document.querySelector( 'li#example' );
 var siblings = buoy.getSiblings( elem ); // [<li>A</li>, <li>B</li>, <li>C</li>]
 ```
 
-### buoy.getQueryString()
+#### buoy.getQueryString()
 
 Get data from a URL's query string.
 
@@ -232,6 +213,15 @@ buoy.getQueryString = function ( field, url );
 var url = 'http://example.com?name=peter&superhero=spiderman';
 var superhero = buoy.getQueryString( 'superhero', url ); // spiderman
 ```
+
+
+### Installing with Package Managers
+
+You can install Buoy with your favorite package manager.
+
+* **NPM:** `npm install cferdinandi/buoy`
+* **Bower:** `bower install https://github.com/cferdinandi/buoy.git`
+* **Component:** `component install cferdinandi/buoy`
 
 
 
