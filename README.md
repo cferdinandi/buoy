@@ -1,4 +1,7 @@
-# Buoy [![Build Status](https://travis-ci.org/cferdinandi/buoy.svg)](https://travis-ci.org/cferdinandi/buoy)
+# [DEPRECTATED] Buoy [![Build Status](https://travis-ci.org/cferdinandi/buoy.svg)](https://travis-ci.org/cferdinandi/buoy)
+
+***Note:*** *This projects has been deprecated and is no longer supported.*
+
 A lightweight collection of helper methods for getting stuff done in native JavaScript.
 
 [Download Buoy](https://github.com/cferdinandi/buoy/archive/master.zip)
